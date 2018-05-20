@@ -14,6 +14,7 @@ import android.nfc.tech.Ndef;
 import android.os.Parcelable;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ public class MainActivity extends Activity {
     public static final String ERROR_DETECTED = "No NFC tag detected!";
     public static final String WRITE_SUCCESS = "Text written to the NFC tag successfully!";
     public static final String WRITE_ERROR = "Error during writing, is the NFC tag close enough to your device?";
+    public static final String TAG_ERROR = "No tag in vicinity";
     NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
     IntentFilter writeTagFilters[];
@@ -39,6 +41,23 @@ public class MainActivity extends Activity {
     TextView message;
     Button btnWrite;
 
+    public void Send(View v) {
+        try {
+            if(myTag ==null) {
+                Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
+            } else {
+                write(message.getText().toString(), myTag);
+                Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG ).show();
+            }
+        } catch (IOException e) {
+            Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
+            e.printStackTrace();
+        } catch (FormatException e) {
+            Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,27 +67,6 @@ public class MainActivity extends Activity {
         tvNFCContent = (TextView) findViewById(R.id.nfc_contents);
         message = (TextView) findViewById(R.id.edit_message);
         btnWrite = (Button) findViewById(R.id.button);
-
-        btnWrite.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if(myTag ==null) {
-                        Toast.makeText(context, ERROR_DETECTED, Toast.LENGTH_LONG).show();
-                    } else {
-                        write(message.getText().toString(), myTag);
-                        Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG ).show();
-                    }
-                } catch (IOException e) {
-                    Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
-                    e.printStackTrace();
-                } catch (FormatException e) {
-                    Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
-                    e.printStackTrace();
-                }
-            }
-        });
 
         android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -81,6 +79,22 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
             finish();
         }
+
+        try {
+            myTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            write(message.getText().toString(), myTag);
+            Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
+            e.printStackTrace();
+        } catch (FormatException e) {
+            Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            Toast.makeText(context, TAG_ERROR, Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
         readFromIntent(getIntent());
 
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -106,11 +120,13 @@ public class MainActivity extends Activity {
                     msgs[i] = (NdefMessage) rawMsgs[i];
                 }
             }
-            buildTagViews(msgs);
+            String uriString = intent.getDataString();
+            buildTagViews(msgs, uriString);
         }
     }
-    private void buildTagViews(NdefMessage[] msgs) {
+    private void buildTagViews(NdefMessage[] msgs, String uriString) {
         if (msgs == null || msgs.length == 0) return;
+
 //TODO: Getting the ndef message doesn't work properly, need to fix
 //        String text = "";
 //        String tagId = new String(msgs[0].getRecords()[0].getType());
@@ -126,7 +142,7 @@ public class MainActivity extends Activity {
 //            Log.e("UnsupportedEncoding", e.toString());
 //        }
 
-        tvNFCContent.setText("NFC Content: " + msgs);
+        tvNFCContent.setText("NFC Content:\n" + msgs + "\n" + uriString + "\n");
     }
 
 
@@ -208,3 +224,4 @@ public class MainActivity extends Activity {
         nfcAdapter.disableForegroundDispatch(this);
     }
 }
+
