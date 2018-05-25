@@ -12,10 +12,12 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +25,6 @@ import java.io.IOException;
 
 public class MainActivity extends Activity {
 
-    public static final String NO_TAG = "Brak Tagu NFC w zasięgu!";
-    public static final String WRITE_SUCCESS = "Operacja zakończona sukcesem!";
-    public static final String WRITE_ERROR = "Napotkano problem, spróbuj ponownie.";
     NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
     IntentFilter writeTagFilters[];
@@ -36,23 +35,51 @@ public class MainActivity extends Activity {
 
     TextView tvNFCContent;
     TextView ID;
+    TextView ID2;
     Button btnWrite;
+    ProgressBar scan;
+    ImageView Status;
 
     public void Send(View v) {
         try {
-            if(myTag ==null) {
-                Toast.makeText(context, NO_TAG, Toast.LENGTH_SHORT).show();
-            } else {
-                write(myTag);
-                Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_SHORT).show();
-            }
+            myTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            write(myTag);
+            Toast.makeText(context, R.string.WRITE_SUCCESS, Toast.LENGTH_LONG).show();
+            Status.setImageResource(R.drawable.success);
+            tvNFCContent.setText(R.string.Success);
+            scan.setIndeterminate(false);
+            scan.setProgress(100);
         } catch (IOException e) {
-            Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.WRITE_ERROR, Toast.LENGTH_LONG ).show();
             e.printStackTrace();
+            tvNFCContent.setText(R.string.Error);
+            Status.setImageResource(R.drawable.error);
+            scan.setIndeterminate(false);
+            scan.setProgress(0);
         } catch (FormatException e) {
-            Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.WRITE_ERROR, Toast.LENGTH_LONG ).show();
             e.printStackTrace();
+            tvNFCContent.setText(R.string.Error);
+            Status.setImageResource(R.drawable.error);
+            scan.setIndeterminate(false);
+            scan.setProgress(0);
+        } catch (NullPointerException e) {
+            Toast.makeText(context, R.string.NO_TAG, Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            tvNFCContent.setText(R.string.Tag_error);
+            Status.setImageResource(R.drawable.wait);
+            scan.setIndeterminate(false);
+            scan.setProgress(0);
         }
+    final Handler delay = new Handler();
+        delay.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            scan.setIndeterminate(true);
+            scan.setProgress(50);
+            tvNFCContent.setText(R.string.Waiting);
+        }
+    },3000);
     }
 
     @Override
@@ -64,19 +91,26 @@ public class MainActivity extends Activity {
         tvNFCContent = findViewById(R.id.nfc_contents);
         btnWrite = findViewById(R.id.button);
         ID = findViewById(R.id.IDdisplay);
+        ID2 = findViewById(R.id.ID2);
+        scan = findViewById(R.id.scanning);
+        Status = findViewById(R.id.info);
 
         android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-
-        ID.setText("Unikalny identyfikator:\n" + android_id);
-        tvNFCContent.setText("Oczekiwanie na zbliżenie...");
+        ID2.setText(R.string.UniqueID);
+        ID.setText(android_id);
+        tvNFCContent.setText(R.string.Waiting);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
         if (nfcAdapter == null) {
-            Toast.makeText(this, "Brak wymaganego NFC.", Toast.LENGTH_LONG).show();
-            finish();
+            tvNFCContent.setText(R.string.NO_NFC);
+            scan.setIndeterminate(false);
+            scan.setProgress(0);
+            Status.setImageResource(R.drawable.error);
         }
 
-
+        if (!nfcAdapter.isEnabled()){
+            tvNFCContent.setText(R.string.NFC_OFF);
+        }
 
         readFromIntent(getIntent());
 
@@ -86,7 +120,6 @@ public class MainActivity extends Activity {
         IntentFilter techDetected = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
         tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
         writeTagFilters = new IntentFilter[] { tagDetected, ndefDetected, techDetected };
-
     }
 
     private void readFromIntent(Intent intent) {
@@ -95,23 +128,47 @@ public class MainActivity extends Activity {
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
 
-            tvNFCContent.setText("Tag w pobliżu ! Gotowość do działania");
-
             try {
                 myTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
                 write(myTag);
-                Toast.makeText(context, WRITE_SUCCESS, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.WRITE_SUCCESS, Toast.LENGTH_LONG).show();
+                Status.setImageResource(R.drawable.success);
+                tvNFCContent.setText(R.string.Success);
+                scan.setIndeterminate(false);
+                scan.setProgress(100);
             } catch (IOException e) {
-                Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
+                Toast.makeText(context, R.string.WRITE_ERROR, Toast.LENGTH_LONG ).show();
                 e.printStackTrace();
+                tvNFCContent.setText(R.string.Error);
+                Status.setImageResource(R.drawable.error);
+                scan.setIndeterminate(false);
+                scan.setProgress(0);
             } catch (FormatException e) {
-                Toast.makeText(context, WRITE_ERROR, Toast.LENGTH_LONG ).show();
+                Toast.makeText(context, R.string.WRITE_ERROR, Toast.LENGTH_LONG ).show();
                 e.printStackTrace();
+                tvNFCContent.setText(R.string.Error);
+                Status.setImageResource(R.drawable.error);
+                scan.setIndeterminate(false);
+                scan.setProgress(0);
             } catch (NullPointerException e) {
-                Toast.makeText(context, NO_TAG, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.NO_TAG, Toast.LENGTH_LONG).show();
                 e.printStackTrace();
+                tvNFCContent.setText(R.string.Tag_error);
+                Status.setImageResource(R.drawable.error);
+                scan.setIndeterminate(false);
+                scan.setProgress(0);
             }
         }
+        final Handler delay = new Handler();
+        delay.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scan.setIndeterminate(true);
+                scan.setProgress(50);
+                tvNFCContent.setText(R.string.Waiting);
+                Status.setImageResource(R.drawable.wait);
+            }
+        },2000);
     }
 
     private void write(Tag tag) throws IOException, FormatException {
@@ -133,7 +190,7 @@ public class MainActivity extends Activity {
             myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         }
         else {
-            tvNFCContent.setText("Zbliż urządzenie to identyfikatora !");
+            tvNFCContent.setText(R.string.CloseIn);
         }
     }
 
@@ -158,5 +215,12 @@ public class MainActivity extends Activity {
         writeMode = false;
         nfcAdapter.disableForegroundDispatch(this);
     }
+
+    public void About (View view){
+            Intent i = new Intent(this, DisplayAboutActivity.class);
+            startActivity(i);
+    }
 }
+
+
 

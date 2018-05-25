@@ -4,4 +4,25 @@
     <string name="button_send">Send</string>
     <string name="info">Aby ponowić próbę autoryzacji, wciśnij przycisk \"Ponów\"</string>
     <string name="Retry">Ponów</string>
+    <string name="NO_TAG">Brak Tagu NFC w zasięgu!</string>
+    <string name="WRITE_SUCCESS">Operacja zakończona sukcesem!</string>
+    <string name="WRITE_ERROR">Napotkano problem, spróbuj ponownie.</string>
+    <string name="Success">Zapis Udany!</string>
+    <string name="Error">Zapis Nieudany!</string>
+    <string name="Tag_error">Brak Tagu w pobliżu!</string>
+    <string name="Waiting">Oczekiwanie na zbliżenie...</string>
+    <string name="UniqueID">Unikalny identyfikator:</string>
+    <string name="NO_NFC">Brak wymaganego NFC.</string>
+    <string name="NFC_OFF">NFC nie jest aktywne !</string>
+    <string name="CloseIn">Zbliż urządzenie to identyfikatora !</string>
+    <string name="About">O aplikacji:
+        \nAplikacja wykonana została na potrzeby pracy dyplomowej o temacie:
+        \n<i><b>Zastosowanie techniki NFC w systemach Inteligentnego Budynku z magistralą CAN</b></i>
+        \njako uzupełnienie systemu kontroli dostępu do budynku na bazie mikrokontrolerów STM32,
+        nakładki NUCLEO NFC oraz telefonu komórkowego.\nAplikacja bazuje na przykładzie dostępnym pod adresem:
+        \nhttp://www.codexpedia.com/android/android-nfc-read-and-write-example/</string>
+    <string name="Authors"><b>Autor Aplikacji:</b>\nPotoczny Damian\n<b>Opiekun Pracy</b>\ndr inż. Kazimierz Kamuda</string>
+    <string name="Progress">Progress info</string>
+    <string name="About2">O aplikacji</string>
+    <string name="Logo">PRz logo</string>
 </resources>
