@@ -1,4 +1,4 @@
-package com.jadimo.testapp;
+package com.jadimo.nfcib;
 
 import android.app.Activity;
 import android.app.PendingIntent;

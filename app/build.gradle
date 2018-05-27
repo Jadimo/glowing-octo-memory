@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.jadimo.testapp"
+        applicationId "com.jadimo.nfcib"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 4
-        versionName "1.4"
+        versionCode 5
+        versionName "2.0"
         setProperty("archivesBaseName", "NFC_Test-$versionName")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

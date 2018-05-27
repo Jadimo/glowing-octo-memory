@@ -1,4 +1,4 @@
-package com.jadimo.testapp;
+package com.jadimo.nfcib;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

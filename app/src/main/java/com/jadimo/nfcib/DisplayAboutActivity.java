@@ -1,4 +1,4 @@
-package com.jadimo.testapp;
+package com.jadimo.nfcib;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

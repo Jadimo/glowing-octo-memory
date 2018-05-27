@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jadimo.testapp">
+    package="com.jadimo.nfcib">
 
     <uses-permission android:name="android.permission.NFC" />
 
@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.jadimo.nfcib.MainActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,11 +58,11 @@
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
         <activity
-            android:name=".DisplayAboutActivity"
-            android:parentActivityName=".MainActivity">
+            android:name="com.jadimo.nfcib.DisplayAboutActivity"
+            android:parentActivityName="com.jadimo.nfcib.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value="com.jadimo.nfcib.MainActivity"/>
         </activity>
 
     </application>
