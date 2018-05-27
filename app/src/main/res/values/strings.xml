@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TestApp</string>
+    <string name="app_name">IB NFC Test App</string>
     <string name="edit_message">Enter a Message</string>
     <string name="button_send">Send</string>
     <string name="info">Aby ponowić próbę autoryzacji, wciśnij przycisk \"Ponów\"</string>

@@ -6,8 +6,9 @@ android {
         applicationId "com.jadimo.testapp"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.4"
+        setProperty("archivesBaseName", "NFC_Test-$versionName")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

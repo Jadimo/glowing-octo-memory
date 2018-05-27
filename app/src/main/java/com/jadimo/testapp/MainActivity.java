@@ -111,8 +111,9 @@ public class MainActivity extends Activity {
         if (!nfcAdapter.isEnabled()){
             tvNFCContent.setText(R.string.NFC_OFF);
         }
-
-        readFromIntent(getIntent());
+        else {
+            readFromIntent(getIntent());
+        }
 
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
@@ -186,12 +187,6 @@ public class MainActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         readFromIntent(intent);
-        if(NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
-            myTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        }
-        else {
-            tvNFCContent.setText(R.string.CloseIn);
-        }
     }
 
     @Override
